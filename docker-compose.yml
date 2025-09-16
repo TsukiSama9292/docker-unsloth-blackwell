@@ -2,13 +2,12 @@ x-default-opts: &default-opts
   restart: unless-stopped
   tty: true
   stdin_open: true
-  privileged: false
-  ipc: private
+  privileged: true
+  ipc: host
 
 services:
   unsloth:
     <<: *default-opts
-    # image: unsloth/unsloth-blackwell:py311-pt2.7.1-cu128-f_xformers033
     build:
       context: .
       dockerfile: dockerfile
@@ -25,6 +24,10 @@ services:
     ports:
       - "${JUPYTER_PORT:-48080}:${JUPYTER_PORT:-48080}"
       - "${SSH_PORT:-2222}:22"
-    # volumes:
-    #   - ./.cache:/workspace/.cache
-    #   - ./work:/workspace/work
+    volumes:
+      - cache:/workspace/.cache
+      - work:/workspace/work
+
+volumes:
+  cache: {}
+  work: {}
